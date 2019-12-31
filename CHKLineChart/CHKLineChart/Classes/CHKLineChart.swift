@@ -181,7 +181,7 @@ open class CHKLineChartView: UIView {
     open var sections = [CHSection]()
     open var selectedIndex: Int = -1                      //选择索引位
     open var scrollToPosition: CHChartViewScrollPosition = .none  //图表刷新后开始显示位置
-    var selectedPoint: CGPoint = CGPoint.zero
+    open var selectedPoint: CGPoint = CGPoint.zero
     
     //是否可缩放
     open var enablePinch: Bool = true
