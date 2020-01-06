@@ -1128,7 +1128,7 @@ extension CHKLineChartView {
             startX = section.frame.origin.x - 3 * (self.isInnerYAxis ? -1 : 1)
             extrude = section.frame.origin.x + section.padding.left - 2
         case .right:
-            startX = section.frame.maxX - self.yAxisLabelWidth + 3 * (self.isInnerYAxis ? -1 : 1)
+            startX = section.frame.maxX - self.yAxisLabelWidth - 3
             extrude = section.frame.origin.x + section.padding.left + section.frame.size.width - section.padding.right
             
         case .none:
@@ -1249,7 +1249,7 @@ extension CHKLineChartView {
         case .left:
             alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.left : CATextLayerAlignmentMode.right
         case .right:
-            alignmentMode = self.isInnerYAxis ? CATextLayerAlignmentMode.right : CATextLayerAlignmentMode.left
+            alignmentMode = CATextLayerAlignmentMode.right
         case .none:
             alignmentMode = CATextLayerAlignmentMode.left
         }
@@ -1269,6 +1269,35 @@ extension CHKLineChartView {
             
             //NSString(string: strValue).draw(in: yLabelRect, withAttributes: fontAttributes)
         }
+    }
+    
+    /// 绘制tickLine
+    open func drawTickLine(_ section: CHSection, item: CHChartItem, title: String ,tickLineColor: UIColor, titleColor: UIColor) {
+        let iy = section.getLocalY(item.openPrice)
+        
+        let referencePath = UIBezierPath()
+        let referenceLayer = CHShapeLayer()
+        referenceLayer.lineWidth = self.lineWidth
+        referenceLayer.strokeColor = tickLineColor.cgColor
+        referenceLayer.lineDashPattern = [5]
+    
+        let startX = section.frame.maxX
+        let yAxisLabel = CHTextLayer()
+        yAxisLabel.frame = CGRect(x: startX-30, y: iy-7, width: 30, height: 30)
+        yAxisLabel.string = title
+        yAxisLabel.fontSize = self.labelFont.pointSize
+        yAxisLabel.foregroundColor =  titleColor.cgColor
+        yAxisLabel.backgroundColor = UIColor.clear.cgColor
+        yAxisLabel.alignmentMode = CATextLayerAlignmentMode.right
+        yAxisLabel.contentsScale = UIScreen.main.scale
+        
+        self.drawLayer.addSublayer(yAxisLabel)
+        
+        referencePath.move(to: CGPoint(x: startX-60, y: iy))
+        referencePath.addLine(to: CGPoint(x: startX - 30, y: iy))
+        
+        referenceLayer.path = referencePath.cgPath
+        self.drawLayer.addSublayer(referenceLayer)
     }
     
     /**
