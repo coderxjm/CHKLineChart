@@ -1273,16 +1273,27 @@ extension CHKLineChartView {
     
     /// 绘制tickLine
     open func drawTickLine(_ section: CHSection, item: CHChartItem, title: String ,tickLineColor: UIColor, titleColor: UIColor) {
-        let iy = section.getLocalY(item.openPrice)
         
+        let textLayerName = "tickLineTextLayer"
+        let referenceLayerName = "tickLineReferenceLayerName"
+        
+        for layer in drawLayer.sublayers ?? [] {
+            if layer.name == textLayerName || layer.name == referenceLayerName {
+                layer.removeFromSuperlayer()
+            }
+        }
+        
+        let yAxisLabel = CHTextLayer()
         let referencePath = UIBezierPath()
         let referenceLayer = CHShapeLayer()
+        let iy = section.getLocalY(item.openPrice)
+        let startX = section.frame.maxX
+        
         referenceLayer.lineWidth = self.lineWidth
         referenceLayer.strokeColor = tickLineColor.cgColor
         referenceLayer.lineDashPattern = [5]
-    
-        let startX = section.frame.maxX
-        let yAxisLabel = CHTextLayer()
+        referenceLayer.name = referenceLayerName
+        yAxisLabel.name = textLayerName
         yAxisLabel.frame = CGRect(x: startX-30, y: iy-7, width: 30, height: 30)
         yAxisLabel.string = title
         yAxisLabel.fontSize = self.labelFont.pointSize
@@ -1292,7 +1303,7 @@ extension CHKLineChartView {
         yAxisLabel.contentsScale = UIScreen.main.scale
         
         self.drawLayer.addSublayer(yAxisLabel)
-        // 最后一个item被移出屏幕
+        // 最后一个item被移出屏幕画一整条线
         if rangeTo != datas.count {
             referencePath.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
         } else {
