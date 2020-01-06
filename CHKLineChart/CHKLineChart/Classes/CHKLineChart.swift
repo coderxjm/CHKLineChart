@@ -1292,8 +1292,12 @@ extension CHKLineChartView {
         yAxisLabel.contentsScale = UIScreen.main.scale
         
         self.drawLayer.addSublayer(yAxisLabel)
-        
-        referencePath.move(to: CGPoint(x: startX-60, y: iy))
+        // 最后一个item被移出屏幕
+        if rangeTo != datas.count {
+            referencePath.move(to: CGPoint(x: section.frame.origin.x + section.padding.left, y: iy))
+        } else {
+            referencePath.move(to: CGPoint(x: startX-60, y: iy))
+        }
         referencePath.addLine(to: CGPoint(x: startX - 30, y: iy))
         
         referenceLayer.path = referencePath.cgPath
